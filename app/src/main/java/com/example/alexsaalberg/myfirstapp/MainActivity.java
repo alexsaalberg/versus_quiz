@@ -1,5 +1,6 @@
 package com.example.alexsaalberg.myfirstapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,11 +11,17 @@ import android.widget.EditText;
 public class MainActivity extends AppCompatActivity {
 
     public static final String EXTRA_MESSAGE = "com.example.alexsaalberg.MESSAGE";
+    public static Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = getApplicationContext();
+    }
+
+    public static Context getContext() {
+        return context;
     }
 
     /** Called when the user taps the Send button */

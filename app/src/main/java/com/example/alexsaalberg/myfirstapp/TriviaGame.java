@@ -1,15 +1,18 @@
 package com.example.alexsaalberg.myfirstapp;
 
+import android.content.Context;
+import android.graphics.Path;
+
 import java.util.ArrayList;
 
 public class TriviaGame {
-    public class Question {
+    public static class Question {
         String question;
         String[] answers;
         int correctAnswer;
     }
 
-    public class PlayerState {
+    public static class PlayerState {
         int questionNum = 0;
         int correct = 0;
         int points = 0;
@@ -26,17 +29,26 @@ public class TriviaGame {
         q1.answers = new String[]{"red", "orange", "purple", "blue"};
         q1.correctAnswer=3;
 
+
+
         for (int i = 0; i < 10; i++) {
-            q1.question += ""+i;
-            q1.answers[1] += ""+i;
-            example.add(q1);
+            Question q = new Question();
+            q.question = i + ". "+ q1.question;
+            q.answers = q1.answers;
+            q.correctAnswer = q1.correctAnswer;
+            example.add(q);
         }
 
         return example;
     }
 
-    public TriviaGame(int numPlayers) {
+    public TriviaGame(Context context, int numPlayers) {
+        OpenTriviaDatabaseDownloader questionDownloader = new OpenTriviaDatabaseDownloader();
+
+        String jsonQuestions = OpenTriviaDatabaseDownloader.getQuestionJSON(context);
+
         questions = fetchNewQuestionSet();
+
         players = new PlayerState[numPlayers];
         for (int i = 0; i < players.length; i++) {
             players[i] = new PlayerState();

@@ -6,43 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".GameScreenActivity">
 
-    <!--
-    <LinearLayout android:orientation="vertical"
-        android:layout_height="fill_parent"
-        android:layout_width="fill_parent">
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1">
-
-            <Button
-                android:id="@+id/button13"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Button" />
-        </LinearLayout>
-
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1">
-
-            <Button
-                android:id="@+id/button14"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:text="Button"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="parent" />
-        </android.support.constraint.ConstraintLayout>
-
-    </LinearLayout>
--->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -51,27 +14,82 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.5"
+            android:layout_weight="1"
             android:orientation="vertical"
-            android:rotation = "180"
+            android:rotation="180"
             android:shrinkColumns="*">
             >
 
-            <TextView
-                android:id="@+id/p2q"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-                android:layout_weight="0.5"
-                android:autoSizeTextType="uniform"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
-                android:gravity="center"
-                android:text='"What a crazy long sentence to put into a textview. What a crazy long sentence to put into a textview."' />
+                    <TextView
+                        android:id="@+id/p2correct"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="0 Correct Answers" />
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0" />
+
+                    <TextView
+                        android:id="@+id/p2time"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="30 seconds left" />
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0" />
+
+                    <TextView
+                        android:id="@+id/p2score"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="0 Points" />
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="3">
+
+                    <TextView
+                        android:id="@+id/p2q"
+                        android:layout_width="match_parent"
+
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+
+                        android:text='"What a crazy long sentence to put into a textview. What a crazy long sentence to put into a textview."'
+                        android:textSize="24sp" />
+                </FrameLayout>
+
+            </LinearLayout>
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.5">
+                android:layout_height="0dp"
+                android:layout_weight="1">
 
                 <TableLayout
                     android:layout_width="match_parent"
@@ -130,25 +148,79 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.5"
+            android:layout_weight="1"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/p1q"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-                android:layout_weight="0.5"
-                android:autoSizeTextType="uniform"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
-                android:gravity="center"
-                android:text='"What a crazy long sentence to put into a textview. What a crazy long sentence to put into a textview."' />
+                    <TextView
+                        android:id="@+id/p1correct"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="0 Correct Answers" />
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0" />
+
+                    <TextView
+                        android:id="@+id/p1time"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="30 seconds left" />
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0" />
+
+                    <TextView
+                        android:id="@+id/p1score"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="0 Points" />
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="3">
+
+                    <TextView
+                        android:id="@+id/p1q"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text='"What a crazy long sentence to put into a textview. What a crazy long sentence to put into a textview."'
+                        android:textSize="24sp"
+                        />
+                </FrameLayout>
+
+            </LinearLayout>
 
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.5">
+                android:layout_height="0dp"
+                android:layout_weight="1">
 
                 <TableLayout
                     android:layout_width="match_parent"
