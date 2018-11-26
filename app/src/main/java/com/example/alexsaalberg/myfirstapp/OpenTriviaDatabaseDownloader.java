@@ -14,7 +14,7 @@ public class OpenTriviaDatabaseDownloader {
     }
 
     public static String getQuestionJSON(Context context) {
-        return loadAssetTextAsString(context, "example_qustions");
+        return loadAssetTextAsString(context, "example_questions");
     }
 
     private static String loadAssetTextAsString(Context context, String name) {

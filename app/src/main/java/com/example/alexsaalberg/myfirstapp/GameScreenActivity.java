@@ -15,6 +15,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class GameScreenActivity extends AppCompatActivity {
 
     TriviaGame triviaGame;
@@ -23,37 +26,102 @@ public class GameScreenActivity extends AppCompatActivity {
     public static final int correctBackgroundColor = 0xFF81c784; // light greenish
     public static final int incorrectBackgroundColor = 0xFFFF5252; // light reddish
 
+    private class PlayerGUI {
+        TextView correctText;
+        TextView timeLeftText;
+        TextView pointsText;
+
+        TextView questionText;
+        Button[] buttons;
+    }
+
+    PlayerGUI[] playerGUIs;
+    final static int numPlayers = 2;
+    final static int numAnswers = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i("Alex", "In the game!");
         super.onCreate(savedInstanceState);
 
+        // Make fullscreen
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        
+        // Inflate layout
         setContentView(R.layout.activity_game_screen);
-
-
-        int numPlayers = 2;
-        triviaGame = new TriviaGame(getApplicationContext(), numPlayers);
-
-        for (int i = 1; i <= numPlayers; i++) {
-            TriviaGame.Question question = triviaGame.getCurrentQuestion(i);
-            updatePlayerQuestion(i, question);
+        
+        // Initialize GUI objects
+        playerGUIs = new PlayerGUI[numPlayers];
+        for(int playerId = 0; playerId < numPlayers; playerId++) {
+            playerGUIs[playerId] = generatePlayerGUI(playerId);
         }
 
+        // Initialize the trivia game
+        triviaGame = new TriviaGame(getApplicationContext(), numPlayers);
 
+        // Populate the player guis with question 0
+        for (int playerId = 0; playerId < numPlayers; playerId++) {
+            Question question = triviaGame.getCurrentQuestion(playerId);
+            updatePlayerGUI(playerId, question);
+        }
+
+        // Remove the action bar
         ActionBar ab = getSupportActionBar();
         //ActionBar actionBar = getActionBar();
         ab.hide();
     }
 
-    public void answerQuestion(int player, int choice) {
-        int playerId = player - 1; // Player1 has id 0
+    public PlayerGUI generatePlayerGUI(int playerId) {
+        /*
+         *  There's probably a better place to document this, but...
+         *
+         *  playerId is 0 indexed, where "Player One" has id 0
+         *  playerNum is 1 indexed, "where "Player One" has num 1
+         *
+         *  playerId is used in the activities and other internal classes.
+         *  playerNum is used for the userfacing stuff (INCLUDING THE VIEW IDS) !!!
+         *  (which is why it appears here)
+         *
+         *  same goes for buttonId / buttonNum
 
-        final Button button = getPlayerButton(player, choice);
+         */
+        
+        PlayerGUI playerGUI = new PlayerGUI();
 
-        if (triviaGame.selectAnswer(player, choice-1)) {
+        int playerNum = playerId + 1;
+        playerGUI.correctText = (TextView) getViewByStringId("p"+playerNum+"correct");
+        playerGUI.timeLeftText = (TextView) getViewByStringId("p"+playerNum+"timeLeft");
+        playerGUI.pointsText = (TextView) getViewByStringId("p"+playerNum+"points");
+
+        playerGUI.questionText = (TextView) getViewByStringId("p"+playerNum+"q");
+        playerGUI.buttons = new Button[numAnswers];
+        for(int buttonId = 0; buttonId < numAnswers; buttonId++) {
+            int buttonNum = buttonId + 1;
+            playerGUI.buttons[buttonId] = (Button) getViewByStringId("p"+playerNum+"a"+buttonNum);
+        }
+
+        return playerGUI;
+    }
+
+    public View getViewByStringId(String stringId) {
+        int id = getResources().getIdentifier(stringId, "id", getPackageName());
+        View result = findViewById(id);
+
+        if(result == null) {
+            Log.e("alex", "View obtained via stringId=\""+stringId+"\" is null");
+        }
+
+        return result;
+    }
+
+    /*
+     * Activated via the GUI.
+     * Indicates that a player clicked a button to answer a question.
+     */
+    public void answerQuestion(int playerId, int choiceId) {
+        final Button button = playerGUIs[playerId].buttons[choiceId];
+
+        if (triviaGame.selectAnswer(playerId, choiceId)) {
             // correct
             setButtonBackground(button, correctBackgroundColor, 1000);
         } else {
@@ -61,22 +129,24 @@ public class GameScreenActivity extends AppCompatActivity {
             setButtonBackground(button, incorrectBackgroundColor, 1000);
         }
 
-        TriviaGame.Question question = triviaGame.nextQuestion(player);
+        Question question = triviaGame.nextQuestion(playerId);
 
         if(question == null) { // question==null means no more questions for this player
-            TriviaGame.Question dummyQuestion = new TriviaGame.Question();
+            Question dummyQuestion = new Question();
             dummyQuestion.question = "Finished!";
-            dummyQuestion.answers = new String[]{":)",":)",":)",":)",};
-            updatePlayerQuestion(player, dummyQuestion); // updates the players gui to this question.
+            dummyQuestion.correct_answer = ":)";
+            dummyQuestion.incorrect_answers = new String[]{":)",":)",":)"};
+            updatePlayerGUI(playerId, dummyQuestion); // updates the players gui to this question.
 
-            setPlayerButtons(player, false); // Disable this player's buttons
+            setPlayerButtons(playerId, false); // Disable this player's buttons
         } else {
-            updatePlayerQuestion(player, question); // updates the players gui to this question.
-
+            updatePlayerGUI(playerId, question); // updates the players gui to this question.
         }
-
     }
 
+    /*
+     * Sets `button`'s background color to `color` for `millTime` milliseconds
+     */
     public void setButtonBackground(final Button button, int color, int millTime) {
         //final Drawable background = button.getBackground();
         //final int oldColor = button.getBackground().getColor();
@@ -94,81 +164,78 @@ public class GameScreenActivity extends AppCompatActivity {
         }.start();
     }
 
-    public Button getPlayerButton(int player, int buttonNum) {
-        String buttonID = "p" + player + "a" + (buttonNum); //buttonNum is 1indexed
-        int resID = getResources().getIdentifier(buttonID, "id", getPackageName());
-        Button button = ((Button) findViewById(resID));
-        return button;
-    }
-
-    public void setPlayerButtons(int player, boolean enabled) {
-        for(int i=0; i<4; i++) {
-            String buttonID = "p" + player + "a" + (i+1);
-            int resID = getResources().getIdentifier(buttonID, "id", getPackageName());
-            Button button = ((Button) findViewById(resID));
-            button.setEnabled(enabled);
+    /*
+     * Enable or disable all of playerId's buttons
+     */
+    public void setPlayerButtons(int playerId, boolean newEnabledState) {
+        for(Button button : playerGUIs[playerId].buttons) {
+            button.setEnabled(newEnabledState);
         }
     }
 
-    public void updatePlayerQuestion(int player, TriviaGame.Question question) {
-        String textViewId = "p" + player + "q";
-        int qId = getResources().getIdentifier(textViewId, "id", getPackageName());
-        TextView textView = ((TextView) this.findViewById(qId));
-        final int activity_game_screen = R.layout.activity_game_screen;
 
-        if(question == null) {
-            textView.setText("Finished!");
-        } else {
-            textView.setText(question.question);
-        }
+    public void updatePlayerGUI(int playerId, Question question) {
+        PlayerGUI gui = playerGUIs[playerId];
+        PlayerState playerState = triviaGame.getPlayerState(playerId);
 
-        for(int i=0; i<4; i++) {
-            String buttonID = "p" + player + "a" + (i+1);
-            int resID = getResources().getIdentifier(buttonID, "id", getPackageName());
-            Button button = ((Button) findViewById(resID));
-            if(question == null) {
-                button.setText(":)");
+        gui.questionText.setText(question.question);
+
+        ArrayList<Integer> buttonNums = new ArrayList<Integer>();
+        buttonNums.add(0);
+        buttonNums.add(1);
+        buttonNums.add(2);
+        buttonNums.add(3);
+
+        for(int buttonId = 0; buttonId < gui.buttons.length; buttonId++) {
+            Button button = gui.buttons[buttonId];
+
+            String newText;
+
+            if(buttonId < playerState.correctAnswerNum) {
+                newText = question.incorrect_answers[buttonId];
+            } else if (buttonId == playerState.correctAnswerNum) {
+                newText = question.correct_answer;
             } else {
-                if(button == null) {
-                    Log.e("alex", "button is null");
-                }
-                button.setText(question.answers[i]);
+                newText = question.incorrect_answers[buttonId - 1];
             }
+
+            button.setText(newText);
         }
     }
 
+    /* Things activated by layouts */
     public void selectP1A1(View view) {
         Log.i("alex","Player 1 selected answer 1");
-        answerQuestion(1, 1);
+        answerQuestion(0, 0);
 
     }
     public void selectP1A2(View view) {
         Log.i("alex","Player 1 selected answer 2");
-        answerQuestion(1, 2);
+        answerQuestion(0, 1);
     }
     public void selectP1A3(View view) {
         Log.i("alex","Player 1 selected answer 3");
-        answerQuestion(1, 3);
+        answerQuestion(0, 2);
     }
     public void selectP1A4(View view) {
         Log.i("alex","Player 1 selected answer 4");
-        answerQuestion(1, 4);
+        answerQuestion(0, 3);
     }
 
     public void selectP2A1(View view) {
         Log.i("alex","Player 2 selected answer 1");
-        answerQuestion(2, 1);
+        answerQuestion(1, 0);
     }
     public void selectP2A2(View view) {
         Log.i("alex","Player 2 selected answer 2");
-        answerQuestion(2, 2);
+        answerQuestion(1, 1);
     }
     public void selectP2A3(View view) {
         Log.i("alex","Player 2 selected answer 3");
-        answerQuestion(2, 3);
+        answerQuestion(1, 2);
     }
     public void selectP2A4(View view) {
         Log.i("alex","Player 2 selected answer 4");
-        answerQuestion(2, 4);
+        answerQuestion(1, 3);
     }
 }

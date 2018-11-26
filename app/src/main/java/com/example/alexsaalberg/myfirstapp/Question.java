@@ -39,6 +39,8 @@ public class Question {
                 for(int j = 0; j < incorrectAnswers.length(); j++) {
                     question.incorrect_answers[j] = incorrectAnswers.getString(j);
                 }
+
+                resultQuestions[i] = question;
             }
 
             return resultQuestions;

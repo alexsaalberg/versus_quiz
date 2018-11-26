@@ -4,94 +4,58 @@ import android.content.Context;
 import android.graphics.Path;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class TriviaGame {
-    public static class Question {
-        String question;
-        String[] answers;
-        int correctAnswer;
-    }
 
-    public static class PlayerState {
-        int questionNum = 0;
-        int correct = 0;
-        int points = 0;
-        public Question question;
-    }
-
-    private ArrayList<Question> questions;
+    private Question[] questions;
     private PlayerState[] players;
-
-    private ArrayList<Question> fetchNewQuestionSet() {
-        ArrayList<Question> example = new ArrayList<Question>();
-        Question q1 = new Question();
-        q1.question="Which color is blue?";
-        q1.answers = new String[]{"red", "orange", "purple", "blue"};
-        q1.correctAnswer=3;
-
-
-
-        for (int i = 0; i < 10; i++) {
-            Question q = new Question();
-            q.question = i + ". "+ q1.question;
-            q.answers = q1.answers;
-            q.correctAnswer = q1.correctAnswer;
-            example.add(q);
-        }
-
-        return example;
-    }
 
     public TriviaGame(Context context, int numPlayers) {
         OpenTriviaDatabaseDownloader questionDownloader = new OpenTriviaDatabaseDownloader();
 
         String jsonQuestions = OpenTriviaDatabaseDownloader.getQuestionJSON(context);
-
-        questions = fetchNewQuestionSet();
+        questions = Question.parseJSON(jsonQuestions);
 
         players = new PlayerState[numPlayers];
         for (int i = 0; i < players.length; i++) {
             players[i] = new PlayerState();
-            players[i].question = questions.get(0);
         }
     }
 
-    public boolean selectAnswer(int player, int choice) {
-        int playerNum = player - 1;
-
-        int question = players[playerNum].questionNum;
-        if(questions.get(question).correctAnswer == choice) {
-            players[playerNum].correct++;
-            players[playerNum].points++;
+    public boolean selectAnswer(int playerId, int choiceNum) {
+        if(players[playerId].correctAnswerNum == choiceNum) {
+            players[playerId].correct++;
+            players[playerId].points += 3;
             return true;
         } else {
-            players[playerNum].points--;
-            // incorrect answer
+            players[playerId].points -= 2;
             return false;
         }
     }
 
-    public Question nextQuestion(int player) {
-        int playerNum = player - 1;
+    public Question nextQuestion(int playerId) {
+        players[playerId].questionNum += 1;
 
-        players[playerNum].questionNum += 1;
+        int questionNum = players[playerId].questionNum;
 
-        if(players[playerNum].questionNum >= questions.size()) {
+        if(questionNum >= questions.length) {
             // this player has exhausted all questions.
             // give the other player a deadline.
             return null;
         } else {
-            // todo: update the question and 4 answers.
-            players[playerNum].question = questions.get(players[playerNum].questionNum);
-            return players[playerNum].question;
+            Random random = new Random();
+            players[playerId].correctAnswerNum = random.nextInt(4); // random from {0,1,2,3}
+
+            return questions[questionNum];
         }
     }
 
-    public Question getCurrentQuestion(int player) {
-        int playerId = player - 1;
-
-        return players[playerId].question;
+    public PlayerState getPlayerState(int playerId) {
+        return players[playerId];
     }
 
-
+    public Question getCurrentQuestion(int playerId) {
+        return questions[players[playerId].questionNum];
+    }
 }

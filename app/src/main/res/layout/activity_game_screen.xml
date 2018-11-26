@@ -47,7 +47,7 @@
                         android:layout_weight="0" />
 
                     <TextView
-                        android:id="@+id/p2time"
+                        android:id="@+id/p2timeLeft"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -60,7 +60,7 @@
                         android:layout_weight="0" />
 
                     <TextView
-                        android:id="@+id/p2score"
+                        android:id="@+id/p2points"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -178,7 +178,7 @@
                         android:layout_weight="0" />
 
                     <TextView
-                        android:id="@+id/p1time"
+                        android:id="@+id/p1timeLeft"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -191,7 +191,7 @@
                         android:layout_weight="0" />
 
                     <TextView
-                        android:id="@+id/p1score"
+                        android:id="@+id/p1points"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
