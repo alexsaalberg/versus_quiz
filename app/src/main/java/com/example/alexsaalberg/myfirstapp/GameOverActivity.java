@@ -50,7 +50,7 @@ public class GameOverActivity extends AppCompatActivity {
         View result = findViewById(id);
 
         if(result == null) {
-            Log.e("alex", "View obtained via stringId=\""+stringId+"\" is null");
+            //Log.e("alex", "View obtained via stringId=\""+stringId+"\" is null");
         }
 
         return result;
@@ -58,13 +58,13 @@ public class GameOverActivity extends AppCompatActivity {
 
     public void onMainMenu(View view) {
         Intent intent = new Intent(this, MainActivity.class);
-        Log.i("Alex", "Going to the main menu...");
+        //Log.i("Alex", "Going to the main menu...");
         startActivity(intent);
     }
 
     public void onPlayAgain(View view) {
         Intent intent = new Intent(this, GameScreenActivity.class);
-        Log.i("Alex", "Going to the game...");
+        //Log.i("Alex", "Going to the game...");
         startActivity(intent);
     }
 }

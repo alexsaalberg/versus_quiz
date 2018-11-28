@@ -39,13 +39,13 @@ public class OpenTriviaDatabaseDownloader {
             String result = buf.toString();
             return result;
         } catch (IOException e) {
-            Log.e("alex", "Error opening asset " + name);
+            //Log.e("alex", "Error opening asset " + name);
         } finally {
             if (in != null) {
                 try {
                     in.close();
                 } catch (IOException e) {
-                    Log.e("alex", "Error closing asset " + name);
+                    //Log.e("alex", "Error closing asset " + name);
                 }
             }
         }

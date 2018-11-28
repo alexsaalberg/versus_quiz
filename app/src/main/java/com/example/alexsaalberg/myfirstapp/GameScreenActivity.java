@@ -141,7 +141,7 @@ public class GameScreenActivity extends AppCompatActivity {
         View result = findViewById(id);
 
         if(result == null) {
-            Log.e("alex", "View obtained via stringId=\""+stringId+"\" is null");
+            //Log.e("alex", "View obtained via stringId=\""+stringId+"\" is null");
         }
 
         return result;
@@ -288,43 +288,43 @@ public class GameScreenActivity extends AppCompatActivity {
             Intent intent = new Intent(this, GameOverActivity.class);
             intent.putExtra(EXTRA_P1_SCORE_NAME, triviaGame.getPlayersScore(0));
             intent.putExtra(EXTRA_P2_SCORE_NAME, triviaGame.getPlayersScore(1));
-            Log.i("Alex", "Going to the game over...");
+            //Log.i("Alex", "Going to the game over...");
             startActivity(intent);
     }
 
     /* Things activated by layouts */
     public void selectP1A1(View view) {
-        Log.i("alex","Player 1 selected answer 1");
+        //Log.i("alex","Player 1 selected answer 1");
         answerQuestion(0, 0);
 
     }
     public void selectP1A2(View view) {
-        Log.i("alex","Player 1 selected answer 2");
+        //Log.i("alex","Player 1 selected answer 2");
         answerQuestion(0, 1);
     }
     public void selectP1A3(View view) {
-        Log.i("alex","Player 1 selected answer 3");
+        //Log.i("alex","Player 1 selected answer 3");
         answerQuestion(0, 2);
     }
     public void selectP1A4(View view) {
-        Log.i("alex","Player 1 selected answer 4");
+        //Log.i("alex","Player 1 selected answer 4");
         answerQuestion(0, 3);
     }
 
     public void selectP2A1(View view) {
-        Log.i("alex","Player 2 selected answer 1");
+        //Log.i("alex","Player 2 selected answer 1");
         answerQuestion(1, 0);
     }
     public void selectP2A2(View view) {
-        Log.i("alex","Player 2 selected answer 2");
+        //Log.i("alex","Player 2 selected answer 2");
         answerQuestion(1, 1);
     }
     public void selectP2A3(View view) {
-        Log.i("alex","Player 2 selected answer 3");
+        //Log.i("alex","Player 2 selected answer 3");
         answerQuestion(1, 2);
     }
     public void selectP2A4(View view) {
-        Log.i("alex","Player 2 selected answer 4");
+        //Log.i("alex","Player 2 selected answer 4");
         answerQuestion(1, 3);
     }
 }

@@ -55,7 +55,7 @@ public class DownloadQuestionActivity extends AppCompatActivity {
             }
             catch(Exception ex)
             {
-                Log.e("App", "yourDataTask", ex);
+                //Log.e("App", "yourDataTask", ex);
                 return null;
             }
             finally
@@ -87,7 +87,7 @@ public class DownloadQuestionActivity extends AppCompatActivity {
     public void goToGame(JSONObject jsonQuestionSet) {
         Intent intent = new Intent(this, GameScreenActivity.class);
         intent.putExtra(EXTRA_JSON_QUESTION_SET_STRING, jsonQuestionSet.toString());
-        Log.i("Alex", "Going to the game...");
+        //Log.i("Alex", "Going to the game...");
         startActivity(intent);
     }
 }
