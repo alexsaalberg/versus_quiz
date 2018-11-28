@@ -11,11 +11,16 @@ public class TriviaGame {
     private Question[] questions;
     private PlayerState[] players;
 
-    public TriviaGame(Context context, int numPlayers) {
+    public TriviaGame(Context context, int numPlayers, String jsonQuestionSet) {
         OpenTriviaDatabaseDownloader questionDownloader = new OpenTriviaDatabaseDownloader();
 
-        String jsonQuestions = OpenTriviaDatabaseDownloader.getQuestionJSON(context);
-        questions = Question.parseJSON(jsonQuestions);
+        // use default if for some reason we weren't given questions.
+        if(jsonQuestionSet == null) {
+            jsonQuestionSet = OpenTriviaDatabaseDownloader.getQuestionJSON(context);
+        }
+
+        questions = Question.parseJSON(jsonQuestionSet);
+
 
         players = new PlayerState[numPlayers];
         for (int i = 0; i < players.length; i++) {
@@ -29,7 +34,7 @@ public class TriviaGame {
             players[playerId].points += 3;
             return true;
         } else {
-            players[playerId].points -= 2;
+            players[playerId].points -= 1;
             return false;
         }
     }
@@ -57,5 +62,17 @@ public class TriviaGame {
 
     public Question getCurrentQuestion(int playerId) {
         return questions[players[playerId].questionNum];
+    }
+
+    public void endPlayersGame(int playerId) {
+        players[playerId].gameOver = true;
+    }
+
+    public boolean isPlayersGameOver(int playerId) {
+        return players[playerId].gameOver;
+    }
+
+    public int getPlayersScore(int playerId) {
+        return players[playerId].points;
     }
 }

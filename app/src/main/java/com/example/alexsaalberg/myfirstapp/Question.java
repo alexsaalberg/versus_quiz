@@ -1,5 +1,8 @@
 package com.example.alexsaalberg.myfirstapp;
 
+import android.os.Build;
+import android.text.Html;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,9 +15,9 @@ public class Question {
     public String correct_answer;
     public String[] incorrect_answers;
 
-    public static Question[] parseJSON(final String JSON_STRING) {
+    public static Question[] parseJSON(final JSONObject jsonObject) {
         try {
-            JSONObject triviaDatabaseResponse = new JSONObject(JSON_STRING);
+            JSONObject triviaDatabaseResponse = jsonObject;
             int responseCode = triviaDatabaseResponse.getInt("response_code");
             if(responseCode != 0) {
                 // todo: error
@@ -40,7 +43,7 @@ public class Question {
                     question.incorrect_answers[j] = incorrectAnswers.getString(j);
                 }
 
-                resultQuestions[i] = question;
+                resultQuestions[i] = fromHtmlQuestion(question);
             }
 
             return resultQuestions;
@@ -48,6 +51,41 @@ public class Question {
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public static Question[] parseJSON(final String JSON_STRING) {
+        try {
+            return parseJSON(new JSONObject(JSON_STRING));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Question fromHtmlQuestion(Question original) {
+        Question decoded = new Question();
+
+        decoded.question = fromHtmlString(original.question);
+
+        decoded.category = fromHtmlString(original.category);
+        decoded.question_type = fromHtmlString(original.question_type);
+        decoded.difficulty = fromHtmlString(original.difficulty);
+        decoded.correct_answer = fromHtmlString(original.correct_answer);
+
+        decoded.incorrect_answers = new String[original.incorrect_answers.length];
+        for(int i = 0; i < original.incorrect_answers.length; i++) {
+            decoded.incorrect_answers[i] = fromHtmlString(original.incorrect_answers[i]);
+        }
+
+        return decoded;
+    }
+
+    public static String fromHtmlString(String original) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return Html.fromHtml(original, 0).toString();
+        } else {
+            return Html.fromHtml(original).toString();
         }
     }
 }

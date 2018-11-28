@@ -5,4 +5,5 @@ public class PlayerState {
     public int correctAnswerNum;
     int correct = 0;
     int points = 0;
+    boolean gameOver = false;
 }

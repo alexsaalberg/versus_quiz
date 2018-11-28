@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.alexsaalberg.myfirstapp">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -25,7 +27,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".GameScreenActivity"></activity>
+        <activity android:name=".GameScreenActivity" />
+        <activity android:name=".GameOverActivity" />
+        <activity android:name=".DownloadQuestionActivity"></activity>
     </application>
+
+
 
 </manifest>

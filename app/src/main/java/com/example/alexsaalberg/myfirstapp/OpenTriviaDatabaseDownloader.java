@@ -1,7 +1,10 @@
 package com.example.alexsaalberg.myfirstapp;
 
 import android.content.Context;
+import android.text.Html;
 import android.util.Log;
+
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,7 +36,8 @@ public class OpenTriviaDatabaseDownloader {
                     buf.append('\n');
                 buf.append(str);
             }
-            return buf.toString();
+            String result = buf.toString();
+            return result;
         } catch (IOException e) {
             Log.e("alex", "Error opening asset " + name);
         } finally {

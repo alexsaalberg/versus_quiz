@@ -1,5 +1,6 @@
 package com.example.alexsaalberg.myfirstapp;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
@@ -23,7 +24,7 @@ public class GameScreenActivity extends AppCompatActivity {
     TriviaGame triviaGame;
     View rootView;
 
-    public static final int correctBackgroundColor = 0xFF81c784; // light greenish
+    public static final int correctBackgroundColor = 0xFFA1D7A4; // darker greenish
     public static final int incorrectBackgroundColor = 0xFFFF5252; // light reddish
 
     private class PlayerGUI {
@@ -32,12 +33,19 @@ public class GameScreenActivity extends AppCompatActivity {
         TextView pointsText;
 
         TextView questionText;
+
+        View hud;
+
         Button[] buttons;
     }
 
     PlayerGUI[] playerGUIs;
     final static int numPlayers = 2;
     final static int numAnswers = 4;
+    final static int gameplayTimeLimit = 30; // in seconds
+
+    final static String EXTRA_P1_SCORE_NAME = "PlayerOneScore";
+    final static String EXTRA_P2_SCORE_NAME = "PlayerTwoScore";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +54,8 @@ public class GameScreenActivity extends AppCompatActivity {
         // Make fullscreen
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        // Hide nav buttons (< O SQUARE)
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         
         // Inflate layout
         setContentView(R.layout.activity_game_screen);
@@ -56,14 +66,35 @@ public class GameScreenActivity extends AppCompatActivity {
             playerGUIs[playerId] = generatePlayerGUI(playerId);
         }
 
+        Intent intent = getIntent();
+        String jsonQuestionSet = intent.getStringExtra(DownloadQuestionActivity.EXTRA_JSON_QUESTION_SET_STRING);
+
         // Initialize the trivia game
-        triviaGame = new TriviaGame(getApplicationContext(), numPlayers);
+        triviaGame = new TriviaGame(getApplicationContext(), numPlayers, jsonQuestionSet);
 
         // Populate the player guis with question 0
         for (int playerId = 0; playerId < numPlayers; playerId++) {
             Question question = triviaGame.getCurrentQuestion(playerId);
             updatePlayerGUI(playerId, question);
+
         }
+
+        //start the timers
+        int numSeconds = gameplayTimeLimit;
+        new CountDownTimer(numSeconds*1000, 100) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                int secondsUntilFinished = (int) (millisUntilFinished / 1000);
+                for(int i = 0; i < numPlayers; i++) {
+                    playerGUIs[i].timeLeftText.setText(secondsUntilFinished + " seconds left");
+                }
+            }
+            @Override
+            public void onFinish() {
+                // game is always over for last one of these to activate.
+                goToGameOver();
+            }
+        }.start();
 
         // Remove the action bar
         ActionBar ab = getSupportActionBar();
@@ -100,6 +131,8 @@ public class GameScreenActivity extends AppCompatActivity {
             playerGUI.buttons[buttonId] = (Button) getViewByStringId("p"+playerNum+"a"+buttonNum);
         }
 
+        playerGUI.hud = (View) getViewByStringId("p"+playerNum+"hud");
+
         return playerGUI;
     }
 
@@ -123,10 +156,16 @@ public class GameScreenActivity extends AppCompatActivity {
 
         if (triviaGame.selectAnswer(playerId, choiceId)) {
             // correct
-            setButtonBackground(button, correctBackgroundColor, 1000);
+            //setViewBackground(playerGUIs[playerId].hud, correctBackgroundColor, 500);
+            setViewBackground(button, correctBackgroundColor, 200);
+            //setTextViewColor(playerGUIs[playerId].correctText, correctBackgroundColor, 500);
+            //(playerGUIs[playerId].pointsText, correctBackgroundColor, 500);
         } else {
             // incorrect
-            setButtonBackground(button, incorrectBackgroundColor, 1000);
+            //setViewBackground(playerGUIs[playerId].hud, incorrectBackgroundColor, 500);
+            setViewBackground(button, incorrectBackgroundColor, 200);
+            //setTextViewColor(playerGUIs[playerId].correctText, incorrectBackgroundColor, 500);
+            setTextViewColor(playerGUIs[playerId].pointsText, incorrectBackgroundColor, 500);
         }
 
         Question question = triviaGame.nextQuestion(playerId);
@@ -138,6 +177,10 @@ public class GameScreenActivity extends AppCompatActivity {
             dummyQuestion.incorrect_answers = new String[]{":)",":)",":)"};
             updatePlayerGUI(playerId, dummyQuestion); // updates the players gui to this question.
 
+            // note that this player is done
+            triviaGame.endPlayersGame(playerId);
+            checkForGameOver();
+
             setPlayerButtons(playerId, false); // Disable this player's buttons
         } else {
             updatePlayerGUI(playerId, question); // updates the players gui to this question.
@@ -147,19 +190,34 @@ public class GameScreenActivity extends AppCompatActivity {
     /*
      * Sets `button`'s background color to `color` for `millTime` milliseconds
      */
-    public void setButtonBackground(final Button button, int color, int millTime) {
+    public void setViewBackground(final View view, int color, int millTime) {
         //final Drawable background = button.getBackground();
         //final int oldColor = button.getBackground().getColor();
 
         //button.setBackgroundColor(color);
-        button.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+        view.getBackground().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
 
         new CountDownTimer(millTime, 500) {
             @Override
             public void onTick(long millisUntilFinished) { }
             @Override
             public void onFinish() {
-                button.getBackground().clearColorFilter();
+                view.getBackground().clearColorFilter();
+            }
+        }.start();
+    }
+
+    public void setTextViewColor(final TextView view, int color, int millTime) {
+
+        final int originalColor = view.getCurrentTextColor();
+        view.setTextColor(color);
+
+        new CountDownTimer(millTime, 500) {
+            @Override
+            public void onTick(long millisUntilFinished) { }
+            @Override
+            public void onFinish() {
+                view.setTextColor(originalColor);
             }
         }.start();
     }
@@ -178,8 +236,10 @@ public class GameScreenActivity extends AppCompatActivity {
         PlayerGUI gui = playerGUIs[playerId];
         PlayerState playerState = triviaGame.getPlayerState(playerId);
 
+        // question
         gui.questionText.setText(question.question);
 
+        // buttons
         ArrayList<Integer> buttonNums = new ArrayList<Integer>();
         buttonNums.add(0);
         buttonNums.add(1);
@@ -201,6 +261,35 @@ public class GameScreenActivity extends AppCompatActivity {
 
             button.setText(newText);
         }
+
+        // score stuff
+        gui.pointsText.setText(playerState.points + " points");
+        gui.correctText.setText(playerState.correct + "/"+ playerState.questionNum +" correct");
+    }
+
+    public boolean isGameOver() {
+        for(int i = 0; i < numPlayers; i++) {
+            if(! triviaGame.isPlayersGameOver(i)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public void checkForGameOver() {
+        if (isGameOver() ) {
+            // game over stuff
+            goToGameOver();
+        }
+    }
+
+    public void goToGameOver() {
+            Intent intent = new Intent(this, GameOverActivity.class);
+            intent.putExtra(EXTRA_P1_SCORE_NAME, triviaGame.getPlayersScore(0));
+            intent.putExtra(EXTRA_P2_SCORE_NAME, triviaGame.getPlayersScore(1));
+            Log.i("Alex", "Going to the game over...");
+            startActivity(intent);
     }
 
     /* Things activated by layouts */
