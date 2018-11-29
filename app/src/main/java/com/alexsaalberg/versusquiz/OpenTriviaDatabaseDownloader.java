@@ -1,4 +1,4 @@
-package com.example.alexsaalberg.myfirstapp;
+package com.alexsaalberg.versusquiz;
 
 import android.content.Context;
 import android.text.Html;

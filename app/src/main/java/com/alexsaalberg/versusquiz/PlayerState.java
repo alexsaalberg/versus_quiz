@@ -1,4 +1,4 @@
-package com.example.alexsaalberg.myfirstapp;
+package com.alexsaalberg.versusquiz;
 
 public class PlayerState {
     int questionNum = 0;

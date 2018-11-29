@@ -1,12 +1,12 @@
-package com.example.alexsaalberg.myfirstapp;
+package com.alexsaalberg.versusquiz;
 
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 
-import org.json.JSONException;
+import com.alexsaalberg.versusquiz.R;
+
 import org.json.JSONObject;
 
 import java.io.BufferedReader;

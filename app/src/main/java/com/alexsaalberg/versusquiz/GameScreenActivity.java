@@ -1,23 +1,19 @@
-package com.example.alexsaalberg.myfirstapp;
+package com.alexsaalberg.versusquiz;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.CountDownTimer;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.alexsaalberg.versusquiz.R;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class GameScreenActivity extends AppCompatActivity {
 
@@ -241,12 +237,9 @@ public class GameScreenActivity extends AppCompatActivity {
 
         // buttons
         ArrayList<Integer> buttonNums = new ArrayList<Integer>();
-        buttonNums.add(0);
-        buttonNums.add(1);
-        buttonNums.add(2);
-        buttonNums.add(3);
 
-        for(int buttonId = 0; buttonId < gui.buttons.length; buttonId++) {
+        int numAnswers = question.incorrect_answers.length + 1;
+        for(int buttonId = 0; buttonId < gui.buttons.length && buttonId < numAnswers; buttonId++) {
             Button button = gui.buttons[buttonId];
 
             String newText;
@@ -260,6 +253,11 @@ public class GameScreenActivity extends AppCompatActivity {
             }
 
             button.setText(newText);
+        }
+
+        // todo: clear text for buttons which were not updated
+        for(int buttonId = numAnswers; buttonId < gui.buttons.length; buttonId++) {
+            gui.buttons[buttonId].setText("");
         }
 
         // score stuff

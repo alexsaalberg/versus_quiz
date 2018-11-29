@@ -1,9 +1,7 @@
-package com.example.alexsaalberg.myfirstapp;
+package com.alexsaalberg.versusquiz;
 
 import android.content.Context;
-import android.graphics.Path;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class TriviaGame {
@@ -49,8 +47,10 @@ public class TriviaGame {
             // give the other player a deadline.
             return null;
         } else {
+            // correct + incorrect
+            int numQuestions = 1 + questions[questionNum].incorrect_answers.length;
             Random random = new Random();
-            players[playerId].correctAnswerNum = random.nextInt(4); // random from {0,1,2,3}
+            players[playerId].correctAnswerNum = random.nextInt(numQuestions); // random from {0,1,2,num-1}
 
             return questions[questionNum];
         }
